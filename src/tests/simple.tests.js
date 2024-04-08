@@ -1,52 +1,33 @@
-import { pages } from "../po/pages/index.js";
-
-describe("Doctors Page", () => {
+describe("Test suite 1", () => {
   beforeEach(async () => {
-    await pages("dashboard").open();
+    await browser.url("https://pastebin.com/");
   });
 
   it("check page title", async () => {
-    await expect(browser).toHaveTitle(
-      "Appointment Planner - Syncfusion Angular Components Showcase App"
-    );
+    const pageTitle = await browser.getTitle();
+    expect(pageTitle).toEqual("Pastebin.com - #1 paste tool since 2002!");
   });
 
-  it("Open modal window for adding a new doctor", async () => {
-    await pages("dashboard").sideMenu.item("doctors").click();
-    await pages("doctors").doctorListHeader.addNewDoctorBtn.click();
-    await expect(pages("doctors").addDoctorModal.rootEl).toBeDisplayed();
-  });
+  it("Create new paste", async () => {
+    await $("#postform-text").setValue("Hello from WebDriver");
 
-  it("Add new doctor", async () => {
-    await pages("dashboard").sideMenu.item("doctors").click();
-    await pages("doctors").doctorListHeader.addNewDoctorBtn.click();
-    await pages("doctors").addDoctorModal.rootEl.waitForDisplayed();
+    // const dropDown = await $('#postform-expiration');
+    // dropDown.selectByAttribute('value', '10M');
+    // const selected = await dropDown.getValue();
+    // expect(selected ).toEqual('10M');
 
-    await pages("doctors").addDoctorModal.input("name").setValue("John Doe");
-    await pages("doctors").addDoctorModal.input("phone").setValue("5984993991");
-    await pages("doctors")
-      .addDoctorModal.input("email")
-      .setValue("tiabu@gmail.com");
-    await pages("doctors").addDoctorModal.input("education").setValue("Master");
-    await pages("doctors").addDoctorModal.input("designation").setValue("Test");
+    await $("#select2-postform-expiration-container").click();
+    await $("//li[text()='10 Minutes']").click();
+    await $("#postform-name").setValue("helloweb");
+    await $(".btn.-big").waitForClickable();
+    await $(".btn.-big").click();
+    await $(".post-view.js-post-view").waitForDisplayed();
 
-    //await pages('doctors').addDoctorModal.saveBtn.click();
-    await pages("doctors").addDoctorModal.inputBtn("save").click();
-    await expect(pages("doctors").addDoctorModal.rootEl).not.toBeDisplayed();
-    await expect(pages("doctors").specialistCard(8).name).toHaveText(
-      "Dr. John Doe"
-    );
-    await expect(pages("doctors").specialistCard(8).education).toHaveText(
-      "Master",
-      { ignoreCase: true }
-    );
-  });
-
-  it("Close modal window for adding a new doctor", async () => {
-    await pages("dashboard").sideMenu.item("doctors").click();
-    await pages("doctors").doctorListHeader.addNewDoctorBtn.click();
-    await pages("doctors").addDoctorModal.rootEl.waitForDisplayed();
-    await pages("doctors").addDoctorModal.inputBtn("close").click();
-    await expect(pages("doctors").addDoctorModal.rootEl).not.toBeDisplayed();
+    const pasteName = await $(".info-top").getText();
+    expect(pasteName).toEqual("helloweb");
+    const newPaste = await $(".de1").getText();
+    expect(newPaste).toEqual("Hello from WebDriver");
+    const expire = await $(".expire").getText();
+    expect(expire).toEqual("10 MIN");
   });
 });
